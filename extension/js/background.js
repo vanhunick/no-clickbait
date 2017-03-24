@@ -1,22 +1,26 @@
-// listen for any changes to the URL of any tab.
-chrome.tabs.onUpdated.addListener(function(id, info, tab) {
-  if (tab.url.toLowerCase().indexOf("youtube.com") > -1) {
-    chrome.pageAction.show(tab.id);
-  }
-});
+var background = (()=> {
 
-var connect = "http://localhost:3000";
+  // Binding
+  chrome.tabs.onUpdated.addListener(tabUpdated);
+  chrome.runtime.onMessage.addListener(pageLoaded);
 
-// Listens to a request from a page to find a title given a url
-chrome.runtime.onMessage.addListener((request, sender ,sendResponse) =>{
-    let paramaters = {
-      url : request.url,
+  // functions
+
+  // Called when user changes tabs checks if the extention should be activated
+  function tabUpdated(id, info, tab) {
+    if (tab.url.toLowerCase().indexOf("youtube.com") > -1) {
+      chrome.pageAction.show(tab.id);
     }
+  }
 
-    $.get(connect + '/gettitle', paramaters, (d,s) => {
-      if(d.title !== ""){
-        sendResponse({title: d.title}); // Return the corrosponding title to the page
-      }
-    });
-    return true; // Returning true is to make it syncronous
-});
+  // Called when a page is loaded checks if the title should be replaced
+  function pageLoaded(request, sender, sendResponse) {
+      let paramaters = {url : request.url};
+      db.findTitle(paramaters, (title) => {
+        if(title !== ""){
+          sendResponse({title: title}); // Return the corrosponding title to the page
+        }
+      });
+      return true;
+  }
+})();
