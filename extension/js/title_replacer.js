@@ -4,6 +4,9 @@ $( document ).ready(function() {
 
     // Cache DOM
     let $title = $('#eow-title');
+    let $links = $('.yt-lockup-title a[href*="/watch?"]');
+
+
 
     // functions
 
@@ -15,14 +18,31 @@ $( document ).ready(function() {
       });
     }
 
+    let findAndReplaceAllTitles = function () {
+      let links = [];
+
+      $links.each((i,e) => {links.push(($(e).attr('href')))});
+      chrome.runtime.sendMessage({urls : links}, function(response) {
+        // replaceAllTitle(response.title);
+      });
+    }
+
     // Replaces the title on the page
     let replaceTitle = function (newTitle) {
       if(newTitle !== ""){
-          $title.html(newTitle);
+          // $title.html(newTitle);
+          $title.append("<h3 style='color:green'>"+newTitle+"</h3>");
       }
     }
-    return { findAndReplaceTitle : findAndReplaceTitle}
+    return { findAndReplaceTitle : findAndReplaceTitle,findAndReplaceAllTitles : findAndReplaceAllTitles }
   })();
 
-  titleReplacer.findAndReplaceTitle();
+  // Check if the page is a video page
+  if(window.location.href.indexOf('/watch') !=-1){
+      console.log("Replacing single title");
+      titleReplacer.findAndReplaceTitle();
+  } else {
+      console.log("Replacing all titles");
+      titleReplacer.findAndReplaceAllTitles();
+  }
 });

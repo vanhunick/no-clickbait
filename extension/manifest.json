@@ -20,7 +20,7 @@
   ],
   "content_scripts": [
     {
-        "matches": ["*://www.youtube.com/watch?*"],
+        "matches": ["*://www.youtube.com/watch?*","*://www.youtube.com/*"],
         "js": ["js/jquery-3.2.0.min.js","js/db.js","js/title_replacer.js"]
     }
   ]

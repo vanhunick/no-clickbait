@@ -20,10 +20,7 @@ router.get('/', (req, res) => {
 router.post('/addtitle', (req, res ) => {
   console.log("Adding title");
 
-  var col = db.getDB().collection('urls');
-
-  console.log(req.body);
-  console.log(req.body.url);
+    var col = db.getDB().collection('urls');
 
     col.insertOne({title : req.body.title, url: req.body.url}, (err, result) => {
 
@@ -31,7 +28,6 @@ router.post('/addtitle', (req, res ) => {
         res.send({succes : true});
     }
 
-    console.log("Inserted a document into the restaurants collection.");
   });
 });
 
@@ -52,5 +48,27 @@ router.get('/gettitle', (req, res ) => {
   });
 });
 
+
+// Return all title for the given links
+router.get('/getAllTitles', (req, res ) => {
+  console.log("Finding all titles!");
+  let col = db.getDB().collection('urls');
+  console.log(req.query.urls);
+  console.log(req.query.urls instanceof Array)
+
+
+  col.find({url: { $in : req.query.urls} }).toArray(function(err, results){
+    if(err !== null){
+      console.log(err);
+    } else {
+      if(results.length > 0){
+        console.log("Sending title back multiple");
+          res.send({title : results[0].title});
+      } else {
+        console.log("No title found multiple");
+      }
+    }
+  });
+});
 
 export default router;

@@ -9,6 +9,13 @@ var db = (()=> {
     });
   }
 
+  // Returns all titles that match URLS in paramaters
+  let findAllTitles = (paramaters, callback) => {
+    $.get(connect + '/getAllTitles', paramaters, (d,s) => {
+      callback(d.titles);
+    });
+  }
+
   // Inserts a title for a url
   let insertTitle = (paramaters, callback) => {
     $.post(connect + '/addtitle',paramaters).done((d) => {
@@ -17,7 +24,8 @@ var db = (()=> {
   }
 
   return {
-    insertTitle : insertTitle,
-    findTitle : findTitle
+    findTitle : findTitle,
+    findAllTitles : findAllTitles,
+    insertTitle : insertTitle
   };
 })();
