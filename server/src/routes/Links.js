@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 
 
 // Add a title for a link
-router.post('/addtitle', (req, res ) => {
+router.post('/addTitle', (req, res ) => {
   console.log("Adding title");
 
     let col = db.getDB().collection('urls');
@@ -42,7 +42,7 @@ function formatURL(url){
 
 
 // Return a title for a link
-router.get('/gettitle', (req, res ) => {
+router.get('/getTitle', (req, res ) => {
   console.log("grabbing title");
   var col = db.getDB().collection('urls');
 
