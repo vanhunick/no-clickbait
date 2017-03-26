@@ -23,7 +23,6 @@ router.post('/addtitle', (req, res ) => {
     let col = db.getDB().collection('urls');
 
     let formatedURL = formatURL(req.body.url);
-
     col.insertOne({title : req.body.title, url: formatedURL}, (err, result) => {
 
     if(err === null){
@@ -47,7 +46,7 @@ router.get('/gettitle', (req, res ) => {
   console.log("grabbing title");
   var col = db.getDB().collection('urls');
 
-  col.find({url: ""+req.query.url}).toArray(function(err, results){
+  col.find({url: formatURL(req.query.url)}).toArray(function(err, results){
 
     if(results.length > 0){
       console.log("Sending title back");
@@ -66,6 +65,9 @@ router.get('/getAllTitles', (req, res ) => {
   console.log(req.query.urls);
   console.log(req.query.urls instanceof Array)
 
+  for(let i = 0; i < req.query.urls.length; i++){
+    req.query.urls[i] = req.query.urls[i].slice(0, req.query.urls[i].indexOf('&t='));
+  }
 
   col.find({url: { $in : req.query.urls} }).toArray(function(err, results){
     if(err !== null){
@@ -73,7 +75,7 @@ router.get('/getAllTitles', (req, res ) => {
     } else {
       if(results.length > 0){
         console.log("Sending title back multiple");
-          res.send({title : results[0].title});
+          res.send({titles : results});
       } else {
         console.log("No title found multiple");
       }

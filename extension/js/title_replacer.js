@@ -43,7 +43,7 @@ $( document ).ready(function() {
   }
 
   // Check if the page is a video page
-  if(window.location.href.indexOf('/watch') !=-1){
+  if(window.location.href.indexOf('/watch') !==-1){
       console.log("Replacing single title");
       titleReplacer.findAndReplaceTitle();
   } else {

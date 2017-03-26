@@ -15,9 +15,7 @@ var background = (()=> {
 
   // Called when a page is loaded checks if the title should be replaced
   function pageLoaded(request, sender, sendResponse) {
-
-
-      if(request.urls !== null){
+      if(request.urls !== undefined){
         console.log("Multiple");
         let paramaters = {urls : request.urls};
 
