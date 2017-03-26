@@ -20,9 +20,11 @@ router.get('/', (req, res) => {
 router.post('/addtitle', (req, res ) => {
   console.log("Adding title");
 
-    var col = db.getDB().collection('urls');
+    let col = db.getDB().collection('urls');
 
-    col.insertOne({title : req.body.title, url: req.body.url}, (err, result) => {
+    let formatedURL = formatURL(req.body.url);
+
+    col.insertOne({title : req.body.title, url: formatedURL}, (err, result) => {
 
     if(err === null){
         res.send({succes : true});
@@ -30,6 +32,14 @@ router.post('/addtitle', (req, res ) => {
 
   });
 });
+
+
+// Removes the start of the url and any time at the end
+function formatURL(url){
+  let shortURL = url.slice(url.indexOf('/watch'), url.length-1);
+  shortURL = shortURL.slice(0, shortURL.indexOf('&t='));
+  return shortURL;
+}
 
 
 // Return a title for a link
