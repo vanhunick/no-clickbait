@@ -11,24 +11,18 @@ let  url = 'mongodb://localhost:27017/no-clickbait';
 
 
 // Arrow functions
-router.get('/', (req, res) => {
-  res.send({message: 'Hello Here is a link!!'});
-});
+// router.get('/', (req, res) => {
+//   res.send({message: 'Hello Here is a link!!'});
+// });
 
 
 // Add a title for a link
 router.post('/addTitle', (req, res ) => {
-  console.log("Adding title");
-
-    let col = db.getDB().collection('urls');
+    let col = db.getDB().collection('urls'); // Grab the collection
 
     let formatedURL = formatURL(req.body.url);
     col.insertOne({title : req.body.title, url: formatedURL}, (err, result) => {
-
-    if(err === null){
-        res.send({succes : true});
-    }
-
+    res.send({succes : err === null});
   });
 });
 
@@ -43,16 +37,17 @@ function formatURL(url){
 
 // Return a title for a link
 router.get('/getTitle', (req, res ) => {
-  console.log("grabbing title");
-  var col = db.getDB().collection('urls');
+  var col = db.getDB().collection('urls'); // Grab the collection
 
-  col.find({url: formatURL(req.query.url)}).toArray(function(err, results){
+  col.find({url: formatURL(req.query.url)}).toArray((err, results) =>{
+    if(err){
+      console.log(err)
+      return;
+    }
 
+    // Check if a title is found
     if(results.length > 0){
-      console.log("Sending title back");
         res.send({title : results[0].title});
-    } else {
-      console.log("No title found");
     }
   });
 });
@@ -60,24 +55,19 @@ router.get('/getTitle', (req, res ) => {
 
 // Return all title for the given links
 router.get('/getAllTitles', (req, res ) => {
-  console.log("Finding all titles!");
-  let col = db.getDB().collection('urls');
-  console.log(req.query.urls);
-  console.log(req.query.urls instanceof Array)
+
+  let col = db.getDB().collection('urls'); // Grab the collection
 
   for(let i = 0; i < req.query.urls.length; i++){
-    req.query.urls[i] = req.query.urls[i].slice(0, req.query.urls[i].indexOf('&t='));
+    req.query.urls[i] = req.query.urls[i].slice(0, req.query.urls[i].indexOf('&t=')); // Remove time from urls
   }
 
-  col.find({url: { $in : req.query.urls} }).toArray(function(err, results){
+  col.find({url: { $in : req.query.urls} }).toArray(function(err, results){ // Return any results where the url us equal to a element inside the req.query.urls array
     if(err !== null){
       console.log(err);
     } else {
       if(results.length > 0){
-        console.log("Sending title back multiple");
           res.send({titles : results});
-      } else {
-        console.log("No title found multiple");
       }
     }
   });
