@@ -23,19 +23,24 @@ $( document ).ready(function() {
 
       $links.each((i,e) => {links.push(($(e).attr('href')))});
       chrome.runtime.sendMessage({urls : links}, function(response) {
-        // replaceAllTitle(response.title);
+        replaceAllTitles(response.titles);
       });
     }
 
     // Replaces the title on the page
     let replaceTitle = function (newTitle) {
       if(newTitle !== ""){
-          // $title.html(newTitle);
           $title.append("<h3 style='color:green'>"+newTitle+"</h3>");
       }
     }
     return { findAndReplaceTitle : findAndReplaceTitle,findAndReplaceAllTitles : findAndReplaceAllTitles }
   })();
+
+  let replaceAllTitles = function(alltitles) {
+    alltitles.forEach( t => {
+        $('.yt-lockup-title a[href^="'+t.url+'"]').closest('h3').append('<h3>'+t.title+'</h3>');
+    });
+  }
 
   // Check if the page is a video page
   if(window.location.href.indexOf('/watch') !=-1){
